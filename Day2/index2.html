@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Bike Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #bike-info {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            display: inline-block;
+        }
+        img {
+            max-width: 300px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get Random Bike Details</h1>
+    <button id="get-bike">Get Random Bike</button>
+    <div id="bike-info"></div>
+
+    <script>
+        document.getElementById('get-bike').addEventListener('click', () => {
+            fetch('https://bikeindex.org:443/api/v3/search?page=1&per_page=1&stolenness=non&random=true')
+                .then(response => response.json())
+                .then(data => {
+                    const bike = data.bikes[0];
+                    const bikeInfo = `
+                        <h2>${bike.title}</h2>
+                        <p><strong>Manufacturer:</strong> ${bike.manufacturer_name}</p>
+                        <p><strong>Year:</strong> ${bike.year || 'Unknown'}</p>
+                        <p><strong>Frame Color:</strong> ${bike.frame_colors.join(', ')}</p>
+                        <p><strong>Location:</strong> ${bike.stolen_location || 'Not Available'}</p>
+                        ${bike.large_img ? `<img src="${bike.large_img}" alt="Bike Image">` : '<p>No image available</p>'}
+                    `;
+                    document.getElementById('bike-info').innerHTML = bikeInfo;
+                })
+                .catch(error => {
+                    document.getElementById('bike-info').innerHTML = 'Error fetching bike data.';
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
